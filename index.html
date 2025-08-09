@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>MAMV Ventures - Pokémon Portfolio</title>
+    
+    <!-- Cache-busting meta tags for development -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <!-- Pokéball MAMV Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            overflow: hidden;
+            background: #000;
+            font-family: 'Courier New', monospace;
+        }
+        
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        #backgroundImage {
+            position: absolute;
+            top: 0;
+            left: 0;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            transform-origin: top left;
+        }
+        
+        #gridOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        
+        #characterCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        #animationCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        
+        .debug-grid {
+            stroke: rgba(255, 255, 0, 0.3);
+            stroke-width: 1;
+            fill: none;
+        }
+        
+        .walkable {
+            fill: rgba(0, 255, 0, 0.2);
+        }
+        
+        .blocked {
+            fill: rgba(255, 0, 0, 0.2);
+        }
+        
+        #debugToggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 2px solid #fff;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 12px;
+        }
+        
+        #buildingInfo {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            border: 3px solid #fff;
+            border-radius: 10px;
+            display: none;
+            z-index: 100;
+            min-width: 300px;
+            text-align: center;
+        }
+        
+        #buildingInfo h2 {
+            margin: 0 0 10px 0;
+            color: #ffcc00;
+        }
+        
+        #buildingInfo p {
+            margin: 5px 0;
+        }
+        
+        /* Animation for MAMV logo */
+        @keyframes logoHover {
+            0%, 100% { 
+                transform: translateY(0px); 
+            }
+            50% { 
+                transform: translateY(-15px); 
+            }
+        }
+        
+        .hovering-logo {
+            animation: logoHover 2s ease-in-out infinite;
+            display: inline-block;
+        }
+        
+        /* Interactive Modal Styles - Game Boy Color Pixel Art Theme */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            z-index: 500;
+        }
+        
+        /* Fade to black transition */
+        .fade-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 499;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        .fade-transition.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .modal-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transform-origin: center;
+            background: #e0f8d0;
+            border: 2px solid #081820;
+            border-radius: 0;
+            padding: 0;
+            width: 75vw;
+            max-width: 1200px;
+            height: 75vh;
+            max-height: 800px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            box-shadow: 
+                0 0 0 2px #306850,
+                0 0 0 4px #e0f8d0,
+                0 0 0 6px #081820;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            font-family: 'Courier New', monospace;
+            font-smooth: never;
+            -webkit-font-smoothing: none;
+        }
+        
+        .modal-header {
+            display: none;
+        }
+        
+        .trainer-card {
+            padding: 0;
+            background: transparent;
+            margin: 0;
+        }
+        
+        /* Top section with name/money/time - pixel perfect */
+        .trainer-top-section {
+            background: #f8b888;
+            border: 2px solid #b85048;
+            margin: 2px;
+            padding: 3px;
+            position: relative;
+        }
+        
+        .trainer-top-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(184, 80, 72, 0.2) 2px, rgba(184, 80, 72, 0.2) 4px);
+            pointer-events: none;
+        }
+        
+        .trainer-stat-line {
+            display: flex;
+            justify-content: space-between;
+            margin: 2px 0;
+            font-size: 11px;
+            font-weight: normal;
+            color: #081820;
+            text-shadow: 1px 1px 0px #f8d8b0;
+            letter-spacing: 1px;
+        }
+        
+        .trainer-stat-label {
+            color: #081820;
+        }
+        
+        .trainer-stat-value {
+            color: #081820;
+        }
+        
+        /* Badges section - pixel perfect */
+        .badges-section {
+            background: #c0e8b8;
+            border: 2px solid #306850;
+            margin: 2px;
+            padding: 3px;
+            position: relative;
+        }
+        
+        .badges-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(48, 104, 80, 0.1) 2px, rgba(48, 104, 80, 0.1) 4px);
+            pointer-events: none;
+        }
+        
+        .badges-title {
+            color: #081820;
+            text-align: center;
+            font-size: 11px;
+            margin-bottom: 3px;
+            font-weight: normal;
+            text-shadow: 1px 1px 0px #e0f8d0;
+            letter-spacing: 1px;
+        }
+        
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            justify-items: center;
+        }
+        
+        .badge-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .badge-slot {
+            width: 32px;
+            height: 32px;
+            background: #88b0d8;
+            border: 2px solid #081820;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+            position: relative;
+            image-rendering: pixelated;
+        }
+        
+        .badge-slot.earned {
+            background: #f8b800;
+            box-shadow: 
+                inset 0 1px 0 rgba(255,255,255,0.5),
+                inset 0 -1px 0 rgba(0,0,0,0.3);
+        }
+        
+        .badge-number {
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            background: #081820;
+            color: #e0f8d0;
+            width: 12px;
+            height: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: normal;
+            border: 1px solid #306850;
+        }
+        
+        .badge-icon {
+            width: 24px;
+            height: 24px;
+            display: block;
+            position: relative;
+            image-rendering: pixelated;
+            margin: 0 auto;
+        }
+        
+        /* Pixel art badge designs - 2x2 pixel units for cleaner look */
+        .badge-thunder {
+            background: linear-gradient(to bottom,
+                #f8f800 0%, #f8f800 25%,
+                #f8d800 25%, #f8d800 50%,
+                #f8b800 50%, #f8b800 75%,
+                #d8a800 75%, #d8a800 100%);
+            clip-path: polygon(
+                40% 0%, 60% 0%,
+                70% 35%, 90% 35%,
+                50% 65%, 60% 65%,
+                40% 100%, 30% 65%,
+                10% 65%, 30% 35%
+            );
+        }
+        
+        .badge-fire {
+            background: linear-gradient(to bottom,
+                #f83800 0%, #f83800 30%,
+                #f85800 30%, #f85800 50%,
+                #f87800 50%, #f87800 70%,
+                #f8b800 70%, #f8b800 100%);
+            clip-path: polygon(
+                50% 0%, 60% 20%, 70% 35%,
+                65% 50%, 75% 65%, 60% 80%,
+                50% 100%, 40% 80%, 25% 65%,
+                35% 50%, 30% 35%, 40% 20%
+            );
+        }
+        
+        .badge-diamond {
+            background: linear-gradient(135deg,
+                #a8e8f8 0%, #a8e8f8 25%,
+                #78c8f8 25%, #78c8f8 50%,
+                #5898d8 50%, #5898d8 75%,
+                #3878b8 75%, #3878b8 100%);
+            clip-path: polygon(
+                50% 0%, 75% 25%,
+                100% 50%, 75% 75%,
+                50% 100%, 25% 75%,
+                0% 50%, 25% 25%
+            );
+        }
+        
+        .badge-rocket {
+            background: linear-gradient(to bottom,
+                #c0c0c0 0%, #c0c0c0 60%,
+                #f87800 60%, #f87800 80%,
+                #f83800 80%, #f83800 100%);
+            clip-path: polygon(
+                50% 0%, 65% 30%, 65% 60%,
+                80% 75%, 65% 75%, 65% 85%,
+                50% 100%, 35% 85%, 35% 75%,
+                20% 75%, 35% 60%, 35% 30%
+            );
+        }
+        
+        .badge-empty {
+            width: 8px;
+            height: 8px;
+            background: #506878;
+        }
+        
+        .badge-label {
+            font-size: 8px;
+            color: #081820;
+            text-align: center;
+            max-width: 60px;
+            line-height: 1;
+            letter-spacing: 0;
+        }
+        
+        .modal-body {
+            color: #000;
+            font-size: 14px;
+            line-height: 1.3;
+            margin: 0;
+            padding: 0;
+            overflow: visible;
+            font-family: 'Courier New', monospace;
+            zoom: 1.08;
+        }
+        
+        .modal-close {
+            background: #306850;
+            color: #e0f8d0;
+            border: 2px solid #081820;
+            padding: 4px 12px;
+            font-size: 11px;
+            cursor: pointer;
+            border-radius: 0;
+            display: block;
+            margin: 6px auto;
+            text-transform: uppercase;
+            font-weight: normal;
+            letter-spacing: 1px;
+            font-family: 'Courier New', monospace;
+            box-shadow: 
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                inset 0 -1px 0 rgba(0,0,0,0.3);
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translate(-50%, -60%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+        
+        /* Pokémon-style text box */
+        .text-box {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) scale(1.125);
+            transform-origin: bottom center;
+            width: 60%;
+            max-width: 960px;
+            background: #F8F8F8;
+            border: 4px solid #000000;
+            border-radius: 8px;
+            padding: 30px;
+            display: none;
+            z-index: 400;
+            box-shadow: 
+                inset 0 0 0 2px #606060,
+                0 4px 0 rgba(0, 0, 0, 0.3);
+            font-family: 'Courier New', monospace;
+            image-rendering: pixelated;
+        }
+        
+        .text-box-content {
+            color: #000000;
+            font-size: 18px;
+            line-height: 1.6;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+        }
+        
+        .text-box-arrow {
+            position: absolute;
+            bottom: 12px;
+            right: 18px;
+            font-size: 18px;
+            animation: pulse 1s infinite;
+            color: #000000;
+        }
+        
+        .controls {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 2px solid #fff;
+            font-size: 12px;
+            transform: scale(0.75);
+            transform-origin: top right;
+        }
+        
+        #musicToggle {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border: 2px solid #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            z-index: 1000;
+            transition: background 0.3s;
+        }
+        
+        #musicToggle:hover {
+            background: rgba(0, 0, 0, 0.9);
+        }
+        
+        #musicToggle.playing {
+            border-color: #4CAF50;
+        }
+        
+        #musicToggle.muted {
+            border-color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <!-- Background Image (the Pokémon town) -->
+        <img id="backgroundImage" src="" alt="Pokemon Town">
+        
+        <!-- Grid Overlay for collision/walkable areas -->
+        <svg id="gridOverlay"></svg>
+        
+        <!-- Character Canvas -->
+        <canvas id="characterCanvas"></canvas>
+        
+        <!-- Animation Canvas for building overlays -->
+        <canvas id="animationCanvas"></canvas>
+    </div>
+    
+    <!-- Debug Toggle (hidden by default) -->
+    <!-- <button id="debugToggle">Toggle Grid</button> -->
+    
+    <!-- Building Info Popup -->
+    <div id="buildingInfo">
+        <h2 id="buildingName">Building Name</h2>
+        <p id="buildingDesc">Description</p>
+    </div>
+    
+    <!-- Fade Transition -->
+    <div id="fadeTransition" class="fade-transition"></div>
+    
+    <!-- Interactive Modal (for buildings) -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="modal-header" id="modalTitle">Welcome!</h2>
+            <div class="modal-body" id="modalBody">
+                <p>This is placeholder content for the interactive zone. When you walk into specific areas, this modal will appear with custom information about that location.</p>
+                <p>You can add any content here - project details, contact information, achievements, or anything else you want to showcase.</p>
+            </div>
+            <button class="modal-close" onclick="closeModal()">PRESS ANY ARROW TO EXIT</button>
+        </div>
+    </div>
+    
+    <!-- Text Box (for NPCs and interactions) -->
+    <div id="textBox" class="text-box">
+        <div class="text-box-content" id="textBoxContent">
+            <!-- Text will appear here -->
+        </div>
+        <div class="text-box-arrow">▼</div>
+    </div>
+    
+    <!-- Controls -->
+    <div class="controls">
+        Arrow Keys / WASD - Move<br>
+        Space/Enter - Interact with NPCs<br>
+        Any key - Close text boxes<br>
+        Walk into zones to trigger
+    </div>
+    
+    <!-- Music Toggle -->
+    <button id="musicToggle" class="muted">🔇 Music: OFF</button>
+    
+    <!-- Background Music -->
+    <audio id="backgroundMusic" loop>
+        <source src="pokemon-music.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    
+    <script>
+        // Aggressive cache-busting for development
+        const version = Date.now() + Math.random().toString(36).substring(2);
+        
+        // Clear any existing scripts to prevent conflicts
+        const existingScripts = document.querySelectorAll('script[src*="character-sprites"], script[src*="new-game"]');
+        existingScripts.forEach(script => script.remove());
+        
+        // Load character sprites first
+        const characterScript = document.createElement('script');
+        characterScript.src = `character-sprites.js?v=${version}&_cb=${Date.now()}`;
+        characterScript.onerror = () => console.error('Failed to load character-sprites.js');
+        document.body.appendChild(characterScript);
+        
+        characterScript.onload = () => {
+            console.log('✅ character-sprites.js loaded with cache-buster:', version);
+            
+            // Then load the main game script
+            const gameScript = document.createElement('script');
+            gameScript.src = `new-game.js?v=${version}&_cb=${Date.now()}`;
+            gameScript.onerror = () => console.error('Failed to load new-game.js');
+            document.body.appendChild(gameScript);
+            
+            gameScript.onload = () => {
+                console.log('✅ new-game.js loaded with cache-buster:', version);
+            };
+        };
+        
+        // Additional cache-busting: Add timestamp to page load
+        console.log('🔄 Page loaded at:', new Date().toISOString(), 'Cache-buster:', version);
+    </script>
+    
+    <script>
+        // Modal control
+        function closeModal() {
+            const fadeTransition = document.getElementById('fadeTransition');
+            const modal = document.getElementById('modalOverlay');
+            
+            // Only move player one tile down for walk-over interactions
+            if (window.game && window.game.entryPosition && window.game.interactionType === 'walk-over') {
+                // Set player position to one tile below entry point
+                window.game.player.gridY = window.game.entryPosition.y + 1;
+                window.game.player.pixelY = window.game.player.gridY * window.game.TILE_SIZE * window.game.SCALE;
+                window.game.player.facing = 'down'; // Face down after exiting
+            }
+            // For spacebar interactions, player stays in same position
+            
+            // Clear interaction type
+            if (window.game) {
+                window.game.interactionType = null;
+            }
+            
+            // Fade to black
+            if (fadeTransition) {
+                fadeTransition.classList.add('active');
+                
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    // Fade back from black
+                    setTimeout(() => {
+                        fadeTransition.classList.remove('active');
+                    }, 100);
+                }, 500);
+            } else {
+                modal.style.display = 'none';
+            }
+        }
+        
+        // Listen for arrow keys or WASD to close modal or text box
+        document.addEventListener('keydown', (e) => {
+            const modal = document.getElementById('modalOverlay');
+            const textBox = document.getElementById('textBox');
+            
+            // Check if text box is open and we can close it
+            if (textBox && textBox.style.display === 'block' && 
+                (!window.game || !window.game.textBoxJustOpened)) {
+                if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || 
+                    e.key === 'ArrowLeft' || e.key === 'ArrowRight' ||
+                    e.key === 'w' || e.key === 'W' ||
+                    e.key === 'a' || e.key === 'A' ||
+                    e.key === 's' || e.key === 'S' ||
+                    e.key === 'd' || e.key === 'D' ||
+                    e.key === ' ' || e.key === 'Enter') {
+                    e.preventDefault();
+                    textBox.style.display = 'none';
+                    if (window.game) {
+                        window.game.textBoxOpen = false;
+                    }
+                }
+            }
+            // Check if modal is open - close only on arrow keys or WASD
+            else if (modal && modal.style.display === 'block') {
+                if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || 
+                    e.key === 'ArrowLeft' || e.key === 'ArrowRight' ||
+                    e.key === 'w' || e.key === 'W' ||
+                    e.key === 'a' || e.key === 'A' ||
+                    e.key === 's' || e.key === 'S' ||
+                    e.key === 'd' || e.key === 'D') {
+                    e.preventDefault();
+                    closeModal();
+                }
+            }
+        });
+        
+        
+        // Music control
+        const audio = document.getElementById('backgroundMusic');
+        const musicToggle = document.getElementById('musicToggle');
+        let musicEnabled = false; // Music starts OFF by default
+        
+        // Set audio volume but don't autoplay
+        window.addEventListener('load', () => {
+            audio.volume = 0.3; // Set to 30% volume
+            // Music will only play when user clicks the toggle button
+        });
+        
+        // Toggle music
+        musicToggle.addEventListener('click', () => {
+            if (musicEnabled) {
+                audio.pause();
+                musicEnabled = false;
+                musicToggle.textContent = '🔇 Music: OFF';
+                musicToggle.classList.remove('playing');
+                musicToggle.classList.add('muted');
+            } else {
+                audio.play();
+                musicEnabled = true;
+                musicToggle.textContent = '🎵 Music: ON';
+                musicToggle.classList.remove('muted');
+                musicToggle.classList.add('playing');
+            }
+        });
+    </script>
+</body>
+</html>
