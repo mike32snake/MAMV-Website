@@ -538,6 +538,129 @@
         #musicToggle.muted {
             border-color: #f44336;
         }
+        
+        /* Mobile Controls */
+        .mobile-controls {
+            display: none;
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            z-index: 1000;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+        
+        /* Show mobile controls on touch devices */
+        @media (pointer: coarse) and (hover: none) {
+            .mobile-controls {
+                display: block;
+            }
+            
+            .controls {
+                display: none;
+            }
+        }
+        
+        /* Also show on small screens */
+        @media screen and (max-width: 768px) {
+            .mobile-controls {
+                display: block;
+            }
+            
+            .controls {
+                display: none;
+            }
+        }
+        
+        .dpad {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            display: grid;
+            grid-template-areas:
+                ". up ."
+                "left center right"
+                ". down .";
+            grid-template-columns: 50px 50px 50px;
+            grid-template-rows: 50px 50px 50px;
+            gap: 0;
+        }
+        
+        .dpad-btn {
+            background: #888;
+            border: 3px solid #000;
+            color: #000;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            box-shadow: 
+                inset 0 2px 0 rgba(255,255,255,0.3),
+                inset 0 -2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .dpad-btn:active {
+            background: #666;
+            box-shadow: 
+                inset 0 -2px 0 rgba(255,255,255,0.3),
+                inset 0 2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .dpad-up {
+            grid-area: up;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .dpad-left {
+            grid-area: left;
+            border-radius: 8px 0 0 8px;
+        }
+        
+        .dpad-center {
+            grid-area: center;
+            background: #666;
+            cursor: default;
+            pointer-events: none;
+        }
+        
+        .dpad-right {
+            grid-area: right;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .dpad-down {
+            grid-area: down;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .action-btn {
+            position: absolute;
+            bottom: 30px;
+            left: -80px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #888;
+            border: 3px solid #000;
+            color: #000;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            box-shadow: 
+                inset 0 2px 0 rgba(255,255,255,0.3),
+                inset 0 -2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .action-btn:active {
+            background: #666;
+            box-shadow: 
+                inset 0 -2px 0 rgba(255,255,255,0.3),
+                inset 0 2px 0 rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body>
@@ -593,6 +716,18 @@
         Space/Enter - Interact with NPCs<br>
         Any key - Close text boxes<br>
         Walk into zones to trigger
+    </div>
+    
+    <!-- Mobile Controls -->
+    <div id="mobileControls" class="mobile-controls">
+        <div class="dpad">
+            <button class="dpad-btn dpad-up" data-direction="up">▲</button>
+            <button class="dpad-btn dpad-left" data-direction="left">◀</button>
+            <button class="dpad-btn dpad-center"></button>
+            <button class="dpad-btn dpad-right" data-direction="right">▶</button>
+            <button class="dpad-btn dpad-down" data-direction="down">▼</button>
+        </div>
+        <button class="action-btn">A</button>
     </div>
     
     <!-- Music Toggle -->
@@ -732,6 +867,119 @@
                 musicToggle.classList.add('muted');
             });
         });
+        
+        // Also try to start music on first user interaction
+        let musicStarted = false;
+        const startMusicOnInteraction = () => {
+            if (!musicStarted) {
+                audio.play().then(() => {
+                    musicStarted = true;
+                    musicEnabled = true;
+                    musicToggle.textContent = '🎵 Music: ON';
+                    musicToggle.classList.remove('muted');
+                    musicToggle.classList.add('playing');
+                }).catch(() => {});
+            }
+        };
+        
+        // Add listeners for first user interaction
+        document.addEventListener('keydown', startMusicOnInteraction, { once: true });
+        document.addEventListener('click', startMusicOnInteraction, { once: true });
+        document.addEventListener('touchstart', startMusicOnInteraction, { once: true });
+        
+        // Mobile controls functionality
+        const mobileControls = document.getElementById('mobileControls');
+        const dpadButtons = document.querySelectorAll('.dpad-btn[data-direction]');
+        const actionBtn = document.querySelector('.action-btn');
+        
+        // Handle D-pad movement
+        dpadButtons.forEach(btn => {
+            let intervalId;
+            
+            const startMoving = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const direction = btn.dataset.direction;
+                
+                // Simulate initial keydown
+                const keyMap = {
+                    'up': 'ArrowUp',
+                    'down': 'ArrowDown',
+                    'left': 'ArrowLeft',
+                    'right': 'ArrowRight'
+                };
+                
+                const keyEvent = new KeyboardEvent('keydown', {
+                    key: keyMap[direction],
+                    code: keyMap[direction],
+                    bubbles: true
+                });
+                document.dispatchEvent(keyEvent);
+                
+                // Continue moving while held
+                intervalId = setInterval(() => {
+                    document.dispatchEvent(keyEvent);
+                }, 100);
+            };
+            
+            const stopMoving = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                }
+                
+                // Simulate keyup
+                const direction = btn.dataset.direction;
+                const keyMap = {
+                    'up': 'ArrowUp',
+                    'down': 'ArrowDown',
+                    'left': 'ArrowLeft',
+                    'right': 'ArrowRight'
+                };
+                
+                const keyUpEvent = new KeyboardEvent('keyup', {
+                    key: keyMap[direction],
+                    code: keyMap[direction],
+                    bubbles: true
+                });
+                document.dispatchEvent(keyUpEvent);
+            };
+            
+            // Touch events
+            btn.addEventListener('touchstart', startMoving, { passive: false });
+            btn.addEventListener('touchend', stopMoving, { passive: false });
+            btn.addEventListener('touchcancel', stopMoving, { passive: false });
+            
+            // Mouse events for testing
+            btn.addEventListener('mousedown', startMoving);
+            btn.addEventListener('mouseup', stopMoving);
+            btn.addEventListener('mouseleave', stopMoving);
+        });
+        
+        // Handle action button (spacebar)
+        if (actionBtn) {
+            actionBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const spaceEvent = new KeyboardEvent('keydown', {
+                    key: ' ',
+                    code: 'Space',
+                    bubbles: true
+                });
+                document.dispatchEvent(spaceEvent);
+            });
+            
+            actionBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                const spaceEvent = new KeyboardEvent('keydown', {
+                    key: ' ',
+                    code: 'Space',
+                    bubbles: true
+                });
+                document.dispatchEvent(spaceEvent);
+            });
+        }
         
         // Toggle music
         musicToggle.addEventListener('click', () => {

@@ -274,7 +274,7 @@ class PokemonPortfolio {
                         
                         <div style="margin-top: 20px; padding: 15px; background: rgba(74, 144, 226, 0.1); border-radius: 8px;">
                             <p style="font-weight: bold;">Track Record:</p>
-                            <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 14px;">
+                            <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 14px; color: #000;">
                                 <li><strong>VC/PE Experience</strong> - Worked across 3 VC/PE backed startups</li>
                                 <li><strong>Hold Co Operations</strong> - Previously managed operations across 5 businesses</li>
                                 <li><strong>Team Building</strong> - Recruited and led high-performance teams</li>
@@ -320,7 +320,7 @@ class PokemonPortfolio {
                         
                         <div style="margin: 20px 0; padding: 15px; background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
                             <p style="font-weight: bold; margin-bottom: 10px;">Head of Sales & Operations</p>
-                            <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 12px;">
+                            <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 12px; color: #000;">
                                 <li><strong>GTM Strategy</strong> - Built entire go-to-market motion from zero</li>
                                 <li><strong>Enterprise Sales</strong> - Closing major DME suppliers and health systems</li>
                                 <li><strong>Operational Excellence</strong> - Streamlining all internal processes</li>
@@ -335,7 +335,7 @@ class PokemonPortfolio {
                         
                         <div style="margin-top: 20px; padding: 15px; background: rgba(74, 144, 226, 0.1); border-radius: 8px;">
                             <p style="font-weight: bold;">What We're Building:</p>
-                            <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 14px;">
+                            <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 14px; color: #000;">
                                 <li><strong>DME Intake Automation</strong> - Eliminating manual data entry for durable medical equipment orders</li>
                                 <li><strong>AI Prior Auth</strong> - Automating insurance approvals in minutes, not days</li>
                                 <li><strong>Smart Document Processing</strong> - OCR + AI for instant medical record extraction</li>
@@ -379,7 +379,7 @@ class PokemonPortfolio {
                         <div style="margin: 20px 0; padding: 15px; background: rgba(0, 212, 255, 0.1); border-radius: 8px;">
                             <p style="font-weight: bold; margin-bottom: 10px;">Expert Templates</p>
                             <p style="font-size: 12px; margin-bottom: 10px;">Curated .md files with proven Sub-Agent configurations for specific domains and use cases.</p>
-                            <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 12px;">
+                            <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 12px; color: #000;">
                                 <li><strong>Domain-specific setups</strong> - Tailored for your industry or field</li>
                                 <li><strong>Battle-tested configs</strong> - Proven to work in production environments</li>
                                 <li><strong>Expert-crafted prompts</strong> - Written by AI engineering professionals</li>
@@ -389,7 +389,7 @@ class PokemonPortfolio {
                         <div style="margin-top: 15px; padding: 15px; background: rgba(0, 255, 0, 0.05); border-radius: 8px;">
                             <p style="font-weight: bold; color: #2d7a2d; margin-bottom: 10px;">Ready-to-Use Configs</p>
                             <p style="font-size: 12px; margin-bottom: 10px;">Pre-configured .md templates that you can immediately use to setup your Sub-Agents.</p>
-                            <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 12px;">
+                            <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 12px; color: #000;">
                                 <li><strong>Instant implementation</strong> - Start using agents in minutes</li>
                                 <li><strong>No setup required</strong> - Pre-configured for immediate deployment</li>
                                 <li><strong>Copy-paste ready</strong> - Drop directly into your workflow</li>
@@ -1449,7 +1449,7 @@ class PokemonPortfolio {
                     
                     <div style="margin-top: 20px; padding: 15px; background: rgba(74, 144, 226, 0.1); border-radius: 8px;">
                         <p style="font-weight: bold;">Track Record:</p>
-                        <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 14px;">
+                        <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 14px; color: #000;">
                             <li><strong>VC/PE Experience</strong> - Worked across 3 VC/PE backed startups</li>
                             <li><strong>Hold Co Operations</strong> - Previously managed operations across 5 businesses</li>
                             <li><strong>Team Building</strong> - Recruited and led high-performance teams</li>
@@ -1496,7 +1496,7 @@ class PokemonPortfolio {
                     
                     <div style="margin: 20px 0; padding: 15px; background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
                         <p style="font-weight: bold; margin-bottom: 10px;">Head of Sales & Operations</p>
-                        <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 12px;">
+                        <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 12px; color: #000;">
                             <li><strong>GTM Strategy</strong> - Built entire go-to-market motion from zero</li>
                             <li><strong>Enterprise Sales</strong> - Closing major DME suppliers and health systems</li>
                             <li><strong>Operational Excellence</strong> - Streamlining all internal processes</li>
@@ -1511,7 +1511,7 @@ class PokemonPortfolio {
                     
                     <div style="margin-top: 20px; padding: 15px; background: rgba(74, 144, 226, 0.1); border-radius: 8px;">
                         <p style="font-weight: bold;">What We're Building:</p>
-                        <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 14px;">
+                        <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 14px; color: #000;">
                             <li><strong>DME Intake Automation</strong> - Eliminating manual data entry for durable medical equipment orders</li>
                             <li><strong>AI Prior Auth</strong> - Automating insurance approvals in minutes, not days</li>
                             <li><strong>Smart Document Processing</strong> - OCR + AI for instant medical record extraction</li>
@@ -1587,7 +1587,7 @@ class PokemonPortfolio {
                     
                     <div style="margin: 20px 0; padding: 15px; background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
                         <p style="font-weight: bold; margin-bottom: 10px;">Head of Sales & Operations</p>
-                        <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 12px;">
+                        <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 12px; color: #000;">
                             <li><strong>GTM Strategy</strong> - Built entire go-to-market motion from zero</li>
                             <li><strong>Enterprise Sales</strong> - Closing major DME suppliers and health systems</li>
                             <li><strong>Operational Excellence</strong> - Streamlining all internal processes</li>
@@ -1602,7 +1602,7 @@ class PokemonPortfolio {
                     
                     <div style="margin-top: 20px; padding: 15px; background: rgba(74, 144, 226, 0.1); border-radius: 8px;">
                         <p style="font-weight: bold;">What We're Building:</p>
-                        <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 14px;">
+                        <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 14px; color: #000;">
                             <li><strong>DME Intake Automation</strong> - Eliminating manual data entry for durable medical equipment orders</li>
                             <li><strong>AI Prior Auth</strong> - Automating insurance approvals in minutes, not days</li>
                             <li><strong>Smart Document Processing</strong> - OCR + AI for instant medical record extraction</li>
@@ -1666,7 +1666,7 @@ class PokemonPortfolio {
                     <div style="margin: 20px 0; padding: 15px; background: rgba(0, 212, 255, 0.1); border-radius: 8px;">
                         <p style="font-weight: bold; margin-bottom: 10px;">Expert Templates</p>
                         <p style="font-size: 12px; margin-bottom: 10px;">Curated .md files with proven Sub-Agent configurations for specific domains and use cases.</p>
-                        <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 12px;">
+                        <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 12px; color: #000;">
                             <li><strong>Domain-specific setups</strong> - Tailored for your industry or field</li>
                             <li><strong>Battle-tested configs</strong> - Proven to work in production environments</li>
                             <li><strong>Expert-crafted prompts</strong> - Written by AI engineering professionals</li>
@@ -1676,7 +1676,7 @@ class PokemonPortfolio {
                     <div style="margin-top: 15px; padding: 15px; background: rgba(0, 255, 0, 0.05); border-radius: 8px;">
                         <p style="font-weight: bold; color: #2d7a2d; margin-bottom: 10px;">Ready-to-Use Configs</p>
                         <p style="font-size: 12px; margin-bottom: 10px;">Pre-configured .md templates that you can immediately use to setup your Sub-Agents.</p>
-                        <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 12px;">
+                        <ul style="text-align: left; display: inline-block; margin-top: 10px; font-size: 12px; color: #000;">
                             <li><strong>Instant implementation</strong> - Start using agents in minutes</li>
                             <li><strong>No setup required</strong> - Pre-configured for immediate deployment</li>
                             <li><strong>Copy-paste ready</strong> - Drop directly into your workflow</li>
