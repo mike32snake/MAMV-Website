@@ -371,7 +371,7 @@ class PokemonPortfolio {
                             Your Sub-Agent Database
                         </p>
                         
-                        <p style="font-size: 14px; margin-bottom: 20px; color: #888;">
+                        <p style="font-size: 14px; margin-bottom: 20px; color: #000;">
                             Access hundreds of carefully crafted .md templates and configurations to quickly<br>
                             setup specialized Sub-Agents for your specific use cases.
                         </p>
@@ -1658,7 +1658,7 @@ class PokemonPortfolio {
                         Your Sub-Agent Database
                     </p>
                     
-                    <p style="font-size: 14px; margin-bottom: 20px; color: #888;">
+                    <p style="font-size: 14px; margin-bottom: 20px; color: #000;">
                         Access hundreds of carefully crafted .md templates and configurations to quickly<br>
                         setup specialized Sub-Agents for your specific use cases.
                     </p>

@@ -13,11 +13,11 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     
-    <!-- Pokéball MAMV Favicon -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
-    <link rel="apple-touch-icon" href="favicon.png">
+    <!-- MAMV Favicon -->
+    <link rel="icon" type="image/x-icon" href="mamv-favicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="mamv-favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="mamv-favicon.png">
+    <link rel="apple-touch-icon" href="mamv-favicon.png">
     <style>
         * {
             margin: 0;
@@ -596,7 +596,7 @@
     </div>
     
     <!-- Music Toggle -->
-    <button id="musicToggle" class="muted">🔇 Music: OFF</button>
+    <button id="musicToggle" class="playing">🎵 Music: ON</button>
     
     <!-- Background Music -->
     <audio id="backgroundMusic" loop>
@@ -712,12 +712,25 @@
         // Music control
         const audio = document.getElementById('backgroundMusic');
         const musicToggle = document.getElementById('musicToggle');
-        let musicEnabled = false; // Music starts OFF by default
+        let musicEnabled = true; // Music starts ON by default
         
-        // Set audio volume but don't autoplay
+        // Set audio volume and autoplay
         window.addEventListener('load', () => {
             audio.volume = 0.3; // Set to 30% volume
-            // Music will only play when user clicks the toggle button
+            // Start playing music automatically
+            audio.play().then(() => {
+                musicEnabled = true;
+                musicToggle.textContent = '🎵 Music: ON';
+                musicToggle.classList.remove('muted');
+                musicToggle.classList.add('playing');
+            }).catch(err => {
+                // Browser blocked autoplay, keep it off
+                console.log('Autoplay blocked by browser:', err);
+                musicEnabled = false;
+                musicToggle.textContent = '🔇 Music: OFF';
+                musicToggle.classList.remove('playing');
+                musicToggle.classList.add('muted');
+            });
         });
         
         // Toggle music
